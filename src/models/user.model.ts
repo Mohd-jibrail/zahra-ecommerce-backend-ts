@@ -8,6 +8,13 @@ interface IUser extends Document
     email:string;
     contact:string;
     password:string;
+    gender:"male" | "female";
+    role:"user" | "admin";
+    dob:Date;
+    createdAt:Date;
+    updatedAt:Date;
+    //virtua element 
+    age:number;
     isPasswordMatched(enterPassword:string):Promise<boolean>;
 }
 const userSchema = new mongoose.Schema({
@@ -15,8 +22,20 @@ const userSchema = new mongoose.Schema({
     lastName:{type:String,require:true},
     email:{type:String,require:true},
     contact:{type:Number,require:true},
-    password:{type:String,require:true}
-});
+    password:{type:String,require:true},
+    gender:{type:String, enum:["male","female"],require:true},
+    role:{type:String, enum:["user","admin"],default:"user"},
+    dob:{type:Date, require:true},
+    address:{
+        houseNo:{type:String, require:true},
+        city:{type:String, require:true},
+        zipcode:{type:Number, require:true},
+        state:{type:Number, require:true},
+    },
+    cart:[{
+        productId:{type:mongoose.Schema.ObjectId, ref:"Product"}
+    }],
+},{timestamps:true});
 userSchema.pre<IUser>("save", async function(next){
    const salt = await bcrypt.genSaltSync(10);
    this.password = await bcrypt.hash(this.password,salt);
@@ -25,5 +44,18 @@ userSchema.pre<IUser>("save", async function(next){
 userSchema.methods.isPasswordMatched=async function(enterPassword:any){
     return await bcrypt.compare(enterPassword,this.password);
 }
-
+userSchema.virtual("age").get(function (this:IUser) {
+    const today = new Date();
+    const dob = this.dob;
+    let age = today.getFullYear() - dob.getFullYear();
+  
+    if (
+      today.getMonth() < dob.getMonth() ||
+      (today.getMonth() === dob.getMonth() && today.getDate() < dob.getDate())
+    ) {
+      age--;
+    }
+    return age;
+  });
+  
 export const User = mongoose.model<IUser>("User",userSchema);

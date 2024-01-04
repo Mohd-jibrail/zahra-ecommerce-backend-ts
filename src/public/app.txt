@@ -1,0 +1,22 @@
+user - SignUp
+     - SignIn
+     - SignOut
+     - Reset Password
+     - Reset Email
+     - Forgate Password
+Product - Add Product
+        - Update Product
+        - Delete Product
+        - Get Product
+        - Get All Product
+    Reviews - Add Reviews
+            - Update
+            - Delete
+            - Get Review
+            - Get All Reviews
+            - like Review
+            - Unlike Review,
+    Rating - Add Rating
+           - Update
+           - Delete
+           
