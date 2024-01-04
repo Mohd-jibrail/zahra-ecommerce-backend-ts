@@ -5,14 +5,34 @@
   "main": "dist/server.js",
   "type": "module",
   "scripts": {
+    "commit": "cz",
+    "formate": "prettier --write \"src/**/*.ts\"",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts",
     "start": "node dist/server.js",
     "build": "tsc",
     "watch": "tsc -w",
     "dev": "nodemon dist/app.js"
   },
+  "config": {
+       "commitizen":{
+          "path": "./node_modules/cz-conventional-changelog"
+       }
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.ts": [
+      "prettier --write",
+      "eslint --fix"
+    ]
+  },
   "dependencies": {
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
@@ -41,7 +61,16 @@
     "@types/node": "^20.8.10",
     "@types/uuid": "^9.0.6",
     "@types/validator": "^13.11.5",
+    "@typescript-eslint/eslint-plugin": "^6.17.0",
+    "@typescript-eslint/parser": "^6.17.0",
+    "commitizen": "^4.3.0",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^8.56.0",
+    "eslint-plugin-prettier": "^5.1.2",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.0",
     "nodemon": "^3.0.1",
-    "typescript": "^5.2.2"
+    "prettier": "^3.1.1",
+    "typescript": "^5.3.3"
   }
 }
