@@ -16,6 +16,7 @@ zahra_server.use('/api/prod', productRoutes)
 
 zahra_server.use(notFound)
 zahra_server.use(errorHandler)
+
 zahra_server.listen(3000, () => {
   console.log('Server running :: 3000')
 })

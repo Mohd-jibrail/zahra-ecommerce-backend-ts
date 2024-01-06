@@ -3,12 +3,11 @@ export const notFound = (req, res, next) => {
     res.status(404);
     next(error);
 };
-export const errorHandler = (error, req, res, next) => {
+export const errorHandler = (error, req, res) => {
     const stCode = res.statusCode == 200 ? 500 : res.statusCode;
-    res.status(stCode)
-        .json({
-        status: "Failed",
+    res.status(stCode).json({
+        status: 'Failed',
         message: error.message,
-        stack: error.stack
+        stack: error.stack,
     });
 };

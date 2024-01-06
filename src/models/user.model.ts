@@ -12,8 +12,7 @@ interface IUser extends Document {
   dob: Date
   createdAt: Date
   updatedAt: Date
-  //virtua element
-  age: number
+  age: number /*virtua element*/
   isPasswordMatched(enterPassword: string): Promise<boolean>
 }
 const userSchema = new mongoose.Schema(
