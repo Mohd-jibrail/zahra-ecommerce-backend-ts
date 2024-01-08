@@ -1,5 +1,7 @@
 import { User } from '../models/user.model.js';
 import JsonWebToken from 'jsonwebtoken';
+import dotEnv from 'dotenv';
+dotEnv.config();
 export const signUp = async (req, res) => {
     const { email } = req.body;
     try {
@@ -25,14 +27,14 @@ export const signUp = async (req, res) => {
 };
 export const signIn = async (req, res) => {
     const { email, password } = req.body;
-    if (!email || !password) {
-        throw new Error('Please enter both email and password');
-    }
     try {
         const user = await User.findOne({ email });
         if (user && (await user.isPasswordMatched(password))) {
-            const token = JsonWebToken.sign({ _id: user._id }, user.email, { expiresIn: '1d' });
-            console.log('toke--------------');
+            const SECRATE_KEY = process.env.SECRATE_KEY;
+            if (!SECRATE_KEY) {
+                throw new Error('SECRATE KEY NOT FOUND');
+            }
+            const token = JsonWebToken.sign({ _id: user._id }, SECRATE_KEY, { expiresIn: '1d' });
             res.status(200).cookie('token', token, { httpOnly: true }).json({
                 status: 'Success',
                 message: 'signIn successfull',

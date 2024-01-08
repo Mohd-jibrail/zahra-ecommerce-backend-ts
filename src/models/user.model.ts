@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 import bcrypt from 'bcrypt'
-interface IUser extends Document {
+export interface IUser extends Document {
   _id: string
   firstName: string
   lastName: string
