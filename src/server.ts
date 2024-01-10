@@ -12,7 +12,8 @@ dotEnv.config()
 
 dbConnection()
 
-zahra_server.use(cookieParser())
+
+zahra_server.use(cookieParser(process.env.SECRATE_KEY))
 zahra_server.use(bodyParser.json())
 zahra_server.use(bodyParser.urlencoded({ extended: false }))
 

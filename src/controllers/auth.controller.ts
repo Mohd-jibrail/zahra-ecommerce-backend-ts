@@ -37,7 +37,8 @@ export const signIn = async (req: Request, res: Response) => {
         throw new Error('SECRATE KEY NOT FOUND')
       }
       const token = JsonWebToken.sign({ _id: user._id }, SECRATE_KEY, { expiresIn: '1d' })
-      res.status(200).cookie('token', token, { httpOnly: true }).json({
+      console.log(token);
+      res.status(200).cookie('token', token,{signed:true}).json({
         status: 'Success',
         message: 'signIn successfull',
       })

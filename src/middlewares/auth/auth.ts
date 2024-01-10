@@ -59,9 +59,10 @@ export const isValidSignUp = (req: Request, res: Response, next: NextFunction) =
 }
 
 export const isAuthenticatedUser = async (req: CustomRequest, res: Response, next: NextFunction) => {
-  const tokenObj = req.cookies
-
-  if (!tokenObj) {
+  const signedCookie = req.signedCookies.token
+  console.log(signedCookie)
+  
+  if (!signedCookie) {
     res.status(404).json({
       status: 'Failed',
       message: 'User Not Authenticated',
@@ -71,13 +72,14 @@ export const isAuthenticatedUser = async (req: CustomRequest, res: Response, nex
     if (!SECRATE_KEY) {
       throw new Error('SECRATE KEY NOT FOUND')
     }
-    const decoded = jsonWebToken.verify(tokenObj.token, SECRATE_KEY) as jwtpayload
+    const decoded = jsonWebToken.verify(signedCookie, SECRATE_KEY) as jwtpayload
     const user = await User.findById({ _id: decoded._id })
     if (user) {
       req.user = user
     }
-  }
-  next()
+  } 
+  next();
+  
 }
 export const isAdmin = async (req: CustomRequest, res: Response, next: NextFunction) => {
   const user = req.user

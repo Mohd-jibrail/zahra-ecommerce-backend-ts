@@ -54,8 +54,9 @@ export const isValidSignUp = (req, res, next) => {
     }
 };
 export const isAuthenticatedUser = async (req, res, next) => {
-    const tokenObj = req.cookies;
-    if (!tokenObj) {
+    const signedCookie = req.signedCookies.token;
+    console.log(signedCookie);
+    if (!signedCookie) {
         res.status(404).json({
             status: 'Failed',
             message: 'User Not Authenticated',
@@ -66,7 +67,7 @@ export const isAuthenticatedUser = async (req, res, next) => {
         if (!SECRATE_KEY) {
             throw new Error('SECRATE KEY NOT FOUND');
         }
-        const decoded = jsonWebToken.verify(tokenObj.token, SECRATE_KEY);
+        const decoded = jsonWebToken.verify(signedCookie, SECRATE_KEY);
         const user = await User.findById({ _id: decoded._id });
         if (user) {
             req.user = user;
