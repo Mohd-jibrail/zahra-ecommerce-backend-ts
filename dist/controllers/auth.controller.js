@@ -1,7 +1,5 @@
 import { User } from '../models/user.model.js';
 import JsonWebToken from 'jsonwebtoken';
-import dotEnv from 'dotenv';
-dotEnv.config();
 export const signUp = async (req, res) => {
     const { email } = req.body;
     try {
@@ -35,11 +33,19 @@ export const signIn = async (req, res) => {
                 throw new Error('SECRATE KEY NOT FOUND');
             }
             const token = JsonWebToken.sign({ _id: user._id }, SECRATE_KEY, { expiresIn: '1d' });
-            console.log(token);
-            res.status(200).cookie('token', token, { signed: true }).json({
-                status: 'Success',
-                message: 'signIn successfull',
-            });
+            if (user.role == 'admin') {
+                req.session.token = token;
+                res.status(200).json({
+                    status: 'Success',
+                    message: 'SignIn Successfull:: Admin',
+                });
+            }
+            else {
+                res.status(200).cookie('token', token, { signed: true }).json({
+                    status: 'Success',
+                    message: 'signIn successfull ',
+                });
+            }
         }
         else if (user) {
             res.status(400).json({

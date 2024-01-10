@@ -5,14 +5,21 @@ import { dbConnection } from './config/db/dbConnection.js'
 import { authRoutes } from './routes/auth.routes.js'
 import { productRoutes } from './routes/product.routes.js'
 import cookieParser from 'cookie-parser'
+import session from 'express-session'
 import * as dotEnv from 'dotenv'
 const zahra_server = express()
 
 dotEnv.config()
 
 dbConnection()
-
-
+const SESSION_SECRATE = process.env.SECRATE_KEY || 'mjibrail@optum.com'
+zahra_server.use(
+  session({
+    secret: SESSION_SECRATE,
+    resave: false,
+    saveUninitialized: true,
+  }),
+)
 zahra_server.use(cookieParser(process.env.SECRATE_KEY))
 zahra_server.use(bodyParser.json())
 zahra_server.use(bodyParser.urlencoded({ extended: false }))

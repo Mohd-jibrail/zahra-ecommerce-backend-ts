@@ -1,7 +1,7 @@
 import { Response, Request, NextFunction } from 'express'
 import jsonWebToken from 'jsonwebtoken'
 import { User } from '../../models/user.model.js'
-import { jwtpayload, CustomRequest } from '../../types/request.js'
+import { jwtpayload, CustomRequest, CustomSessionData } from '../../types/request.js'
 import zod from 'zod'
 
 const userSignIn = zod.object({
@@ -59,10 +59,10 @@ export const isValidSignUp = (req: Request, res: Response, next: NextFunction) =
 }
 
 export const isAuthenticatedUser = async (req: CustomRequest, res: Response, next: NextFunction) => {
-  const signedCookie = req.signedCookies.token
-  console.log(signedCookie)
-  
-  if (!signedCookie) {
+  const signedCookieToken = req.signedCookies.token
+  const sessionToken =  (req.session as CustomSessionData).token
+
+  if (!signedCookieToken && !sessionToken?.trim()) {
     res.status(404).json({
       status: 'Failed',
       message: 'User Not Authenticated',
@@ -72,14 +72,14 @@ export const isAuthenticatedUser = async (req: CustomRequest, res: Response, nex
     if (!SECRATE_KEY) {
       throw new Error('SECRATE KEY NOT FOUND')
     }
-    const decoded = jsonWebToken.verify(signedCookie, SECRATE_KEY) as jwtpayload
+    const token = signedCookieToken || sessionToken
+    const decoded = jsonWebToken.verify(token , SECRATE_KEY) as jwtpayload
     const user = await User.findById({ _id: decoded._id })
     if (user) {
       req.user = user
     }
-  } 
-  next();
-  
+    next()
+  }
 }
 export const isAdmin = async (req: CustomRequest, res: Response, next: NextFunction) => {
   const user = req.user
