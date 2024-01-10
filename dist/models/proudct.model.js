@@ -9,12 +9,10 @@ const productSchema = new mongoose.Schema({
     isAvailable: { type: Boolean, default: true },
     reviews: [
         {
-            review: {
-                userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-                comments: { type: String, require: true },
-                rating: { type: Number, require: true },
-                recommend: { type: Boolean, default: false },
-            },
+            userId: { type: mongoose.Schema.ObjectId, ref: 'User' },
+            comments: { type: String, require: true },
+            rating: { type: Number, require: true },
+            recommend: { type: Boolean, default: false },
         },
     ],
 }, { timestamps: true });
