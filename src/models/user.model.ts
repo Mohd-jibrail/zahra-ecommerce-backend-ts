@@ -10,6 +10,22 @@ export interface IUser extends Document {
   gender: 'male' | 'female'
   role: 'user' | 'admin'
   dob: Date
+  address: [
+    { 
+      h_No: string
+      city: string
+      zipcode: string
+      state: string
+    },
+  ]
+  cart: [
+    {
+      prodId: string
+      name: string
+      price: string
+      count: string
+    },
+  ]
   createdAt: Date
   updatedAt: Date
   age: number /*virtua element*/
@@ -25,15 +41,20 @@ const userSchema = new mongoose.Schema(
     gender: { type: String, enum: ['male', 'female'], require: true },
     role: { type: String, enum: ['user', 'admin'], default: 'user' },
     dob: { type: Date, require: true },
-    address: {
-      houseNo: { type: String, require: true },
-      city: { type: String, require: true },
-      zipcode: { type: Number, require: true },
-      state: { type: Number, require: true },
-    },
+    address: [
+      {
+        h_No: { type: String, require: true },
+        city: { type: String, require: true },
+        zipcode: { type: Number, require: true },
+        state: { type: String, require: true },
+      },
+    ],
     cart: [
       {
-        productId: { type: mongoose.Schema.ObjectId, ref: 'Product' },
+        prodId: { type: mongoose.Schema.ObjectId, ref: 'Product' },
+        name: { type: String, require: true },
+        price: { type: Number, require: true },
+        count: { type: Number, require: true },
       },
     ],
   },

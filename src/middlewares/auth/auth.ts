@@ -60,7 +60,7 @@ export const isValidSignUp = (req: Request, res: Response, next: NextFunction) =
 
 export const isAuthenticatedUser = async (req: CustomRequest, res: Response, next: NextFunction) => {
   const signedCookieToken = req.signedCookies.token
-  const sessionToken =  (req.session as CustomSessionData).token
+  const sessionToken = (req.session as CustomSessionData).token
 
   if (!signedCookieToken && !sessionToken?.trim()) {
     res.status(404).json({
@@ -73,7 +73,7 @@ export const isAuthenticatedUser = async (req: CustomRequest, res: Response, nex
       throw new Error('SECRATE KEY NOT FOUND')
     }
     const token = signedCookieToken || sessionToken
-    const decoded = jsonWebToken.verify(token , SECRATE_KEY) as jwtpayload
+    const decoded = jsonWebToken.verify(token, SECRATE_KEY) as jwtpayload
     const user = await User.findById({ _id: decoded._id })
     if (user) {
       req.user = user
