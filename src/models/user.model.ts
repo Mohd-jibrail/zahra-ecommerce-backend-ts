@@ -11,7 +11,7 @@ export interface IUser extends Document {
   role: 'user' | 'admin'
   dob: Date
   address: [
-    { 
+    {
       h_No: string
       city: string
       zipcode: string
@@ -22,8 +22,8 @@ export interface IUser extends Document {
     {
       prodId: string
       name: string
-      price: string
-      count: string
+      price: number
+      count: number
     },
   ]
   createdAt: Date

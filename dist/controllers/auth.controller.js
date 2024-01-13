@@ -1,4 +1,5 @@
 import { User } from '../models/user.model.js';
+import { Product } from '../models/proudct.model.js';
 import JsonWebToken from 'jsonwebtoken';
 export const signUp = async (req, res) => {
     const { email } = req.body;
@@ -80,6 +81,7 @@ export const signOut = async (req, res) => {
         throw new Error('Error Found');
     }
 };
+/* User Address CRUD functionality implementation */
 export const addToAddress = async (req, res) => {
     const _id = req?.user?._id;
     try {
@@ -125,13 +127,13 @@ export const updateAddress = async (req, res) => {
                 'address.$.h_No': req?.body?.h_No,
                 'address.$.city': req?.body?.city,
                 'address.$.zipcode': req?.body?.zipcode,
-                'address.$.state': req?.body?.state
+                'address.$.state': req?.body?.state,
             },
         }, { new: true });
         res.status(200).json({
             status: 'Success',
             message: 'Address Updated',
-            user
+            user,
         });
     }
     catch (err) {
@@ -147,13 +149,88 @@ export const removeAddress = async (req, res) => {
     try {
         await User.findByIdAndUpdate({ _id }, {
             $pull: {
-                address: { _id: _addressId }
-            }
+                address: { _id: _addressId },
+            },
         }, { new: true });
         res.status(200).json({
             status: 'Success',
             message: 'Address Removed',
         });
+    }
+    catch (err) {
+        res.status(500).json({
+            status: 'Failed',
+            message: 'Technical Error',
+        });
+    }
+};
+/* User Cart CRUD functionality implementation */
+export const addToCart = async (req, res) => {
+    const _id = req.params.id;
+    const user = req?.user;
+    try {
+        const isProductAlreadyAddedToCart = user?.cart.some((cartItem) => JSON.stringify(cartItem.prodId) == JSON.stringify(_id));
+        if (isProductAlreadyAddedToCart) {
+            res.status(404).json({
+                status: 'Success',
+                message: 'Product already added to Cart',
+            });
+        }
+        else {
+            const product = await Product.findById({ _id });
+            if (!product) {
+                res.status(404).json({
+                    status: 'Success',
+                    message: 'Product Not found',
+                });
+            }
+            else {
+                const newCart = {
+                    prodId: product?._id,
+                    name: product?.name,
+                    price: product?.price,
+                    count: 1,
+                };
+                const user = await User.findById({ _id: req?.user?._id });
+                user?.cart.push(newCart);
+                user?.save();
+                res.status(404).json({
+                    status: 'Success',
+                    message: 'Product Added to Cart',
+                });
+            }
+        }
+    }
+    catch (err) {
+        res.status(500).json({
+            status: 'Failed',
+            message: 'Technical Error',
+            error: err,
+        });
+    }
+};
+export const removeFromCart = async (req, res) => {
+    const _id = req.params.id;
+    const user = req?.user;
+    try {
+        const isProductAlreadyRemovedCart = user?.cart.some((cartItem) => JSON.stringify(cartItem.prodId) == JSON.stringify(_id));
+        if (!isProductAlreadyRemovedCart) {
+            res.status(404).json({
+                status: 'Success',
+                message: 'Product already Removed from Cart',
+            });
+        }
+        else {
+            await User.findOneAndUpdate({ 'cart.prodId': _id }, {
+                $pull: {
+                    cart: { prodId: _id },
+                },
+            }, { new: true });
+            res.status(200).json({
+                status: 'Success',
+                message: 'Product removed from Cart',
+            });
+        }
     }
     catch (err) {
         res.status(500).json({
