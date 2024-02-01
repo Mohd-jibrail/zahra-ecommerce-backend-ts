@@ -7,9 +7,11 @@ import { productRoutes } from './routes/product.routes.js';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import * as dotEnv from 'dotenv';
+import cors from "cors";
 const zahra_server = express();
 dotEnv.config();
 dbConnection();
+zahra_server.use(cors());
 const SESSION_SECRATE = process.env.SECRATE_KEY || 'mjibrail@optum.com';
 zahra_server.use(session({
     secret: SESSION_SECRATE,
